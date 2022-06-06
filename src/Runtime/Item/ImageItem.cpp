@@ -1,11 +1,12 @@
 #include "ImageItem.h"
 #include <QPainter>
+#include <string>
 namespace Stone
 {
-	ImageItem::ImageItem(QGraphicsItem* parent)
+	ImageItem::ImageItem(QGraphicsItem* parent, const std::string& filename)
 		: QGraphicsItem(parent)
 	{
-		m_Image = new QImage("D:/data/imgs/Lenna.png");
+		m_Image = new QImage(filename.c_str());
 		x = -m_Image->width() / 2.0;
 		y = -m_Image->height() / 2.0;
 		width = m_Image->width();
@@ -13,14 +14,12 @@ namespace Stone
 	}
 	void ImageItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* item, QWidget* widget)
 	{
-		
 		painter->drawImage(QRect(-m_Image->width()/2.0, -m_Image->height() / 2.0, -m_Image->width(), -m_Image->height()), *m_Image);
-		//painter->fillRect(QRectF(0, 0, 60, 60), QColor(1, 0, 0));
 	}
 
 	QRectF ImageItem::boundingRect() const
 	{
-		return QRectF(x, y, width, height);
+		return QRectF(-width*4, -height * 2, 8 * width, 4 * height);
 	}
 	QPainterPath ImageItem::shape() const
 	{
