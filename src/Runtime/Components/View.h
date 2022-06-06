@@ -3,12 +3,21 @@
 #include <QGraphicsView>
 namespace Stone
 {
+	class View;
 	class GraphicsView : public QGraphicsView
 	{
+		Q_OBJECT
 	public:
+		GraphicsView(View* view)
+			:m_View(view)
+		{}
 
+	protected:
+#if QT_CONFIG(wheelevent)
+		void wheelEvent(QWheelEvent*) override;
+#endif
 	private:
-
+		View* m_View;
 	};
 
 	class View : public QFrame
@@ -16,7 +25,10 @@ namespace Stone
 		Q_OBJECT
 	public:
 		View();
-	private:
 		GraphicsView* m_GraphicsView;
+	public slots:
+		void zoomIn();
+		void zoomOut();
+	private:
 	};
 }
