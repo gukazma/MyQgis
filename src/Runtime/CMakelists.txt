@@ -1,4 +1,8 @@
 set(TARGET_NAME ${PROJECT_NAME}Runtime)
+# just for qt
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 file(GLOB_RECURSE HEADER_FILES "*.h")
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
@@ -16,6 +20,8 @@ target_compile_options(${TARGET_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:
 
 # Link dependencies    
 target_link_libraries(${TARGET_NAME} PUBLIC
+                      Qt5::Gui  
+                      Qt5::Widgets
           )
 
 target_include_directories(

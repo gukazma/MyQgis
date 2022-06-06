@@ -1,18 +1,11 @@
 #include <iostream>
 #include <QApplication>
-#include <QGraphicsView>
-#include "Core/test.h"
-#include "test.h"
+#include <Components/View.h>
+#include "MainWindow.h"
 int main(int argc, char *argv[])
 {
-    test();
     QApplication* app = new QApplication(argc, argv);
-    QGraphicsScene scene;
-    scene.addText("Hello, world!");
-    QGraphicsRectItem* rect = scene.addRect(0, 0, 100, 100);
-
-    View view;
-    view.setScene(&scene);
-    view.show();
+    Stone::MainWindow* mainwindow = new Stone::MainWindow();
+    mainwindow->show();
     app->exec();
 }
