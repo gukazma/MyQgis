@@ -19,7 +19,7 @@ namespace Stone
 
 	void MainWindow::openImage()
 	{
-		QString fileName = QFileDialog::getOpenFileName(this, tr("open file"), "", tr("png (*.png)"
+		QString fileName = QFileDialog::getOpenFileName(this, tr("open file"), "", tr("GeoTIFF (*.tif)"
 		));
 		if (fileName.isEmpty()) return;
 
