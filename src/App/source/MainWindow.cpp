@@ -2,6 +2,7 @@
 #include "ui_Mainwindow.h"
 #include <Components/View.h>
 #include <Item/ImageItem.h>
+#include <QFileDialog>
 namespace Stone
 {
 	MainWindow::MainWindow(QWidget* parent)
@@ -13,5 +14,16 @@ namespace Stone
 		m_Scene = new QGraphicsScene;
 		view->m_GraphicsView->setScene(m_Scene);
 		setCentralWidget(view);
+		connect(ui->actionOpenImage, &QAction::triggered, this, &MainWindow::openImage);
+	}
+
+	void MainWindow::openImage()
+	{
+		QString fileName = QFileDialog::getOpenFileName(this, tr("open file"), "", tr("png (*.png)"
+		));
+		if (fileName.isEmpty()) return;
+
+		ImageItem* item = new ImageItem(nullptr, fileName.toStdString());
+		m_Scene->addItem(item);
 	}
 }

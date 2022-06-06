@@ -14,6 +14,8 @@ namespace Stone
     public:
         MainWindow(QWidget* parent = nullptr);
         ~MainWindow() = default;
+    public Q_SLOTS:
+        void openImage();
     private:
         QGraphicsScene* m_Scene;
         Ui::MainWindow* ui;
