@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "ui_Mainwindow.h"
-#include <Components/View.h>
-#include <Item/ImageItem.h>
+#include <View.h>
+#include <ImageItem.h>
 #include <QFileDialog>
 namespace Stone
 {
