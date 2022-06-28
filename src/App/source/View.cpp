@@ -33,9 +33,11 @@ namespace Stone
 	void View::zoomIn()
 	{
 		m_GraphicsView->scale(1.2, 1.2);
+		Scale_level += 1.2;
 	}
 	void View::zoomOut()
 	{
 		m_GraphicsView->scale(1 / 1.2, 1 / 1.2);
+		Scale_level -= 1.2;
 	}
 }

@@ -22,6 +22,9 @@ namespace Stone
     private:
         QGraphicsScene* m_Scene;
         Ui::MainWindow* ui;
+
+        int iScaleWidth;
+        int iScaleHeight;
     };
 
 }

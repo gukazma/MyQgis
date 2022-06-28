@@ -4,6 +4,7 @@
 #include <ImageItem.h>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <iostream>
 namespace Stone
 {
 	void MainWindow::showImg(QList<GDALRasterBand*>* imgBand) {
@@ -15,7 +16,7 @@ namespace Stone
 		int imgWidth = imgBand->at(0)->GetXSize();
 		int imgHeight = imgBand->at(0)->GetYSize();
 
-		auto m_scaleFactor = this->height() * 1.0 / imgHeight;
+		auto m_scaleFactor = this->height() * 5.0 / imgHeight;
 
 		int iScaleWidth = (int)(imgWidth * m_scaleFactor - 1);
 		int iScaleHeight = (int)(imgHeight * m_scaleFactor - 1);
@@ -109,11 +110,13 @@ namespace Stone
 		GDALAllRegister();
 		CPLSetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");
 		auto poDataset = (GDALDataset*)GDALOpen(file.toStdString().c_str(), GA_ReadOnly);
+		
 		if (poDataset == NULL)
 		{
 			QMessageBox::about(this, u8"提示", u8"指定的文件不能打开！");
 			return;
 		}
+
 		int  ret = QMessageBox::question(this, "question", u8"是否构建金字塔？", QMessageBox::No | QMessageBox::Yes);
 		switch (ret) {
 		case QMessageBox::Yes:
@@ -129,10 +132,18 @@ namespace Stone
 			break;
 		}
 		
+		//确认影像已经有金字塔
+		int pyramidCount = poDataset->GetRasterBand(1)->GetOverviewCount();
+		if (pyramidCount == 0)
+		{
+			QMessageBox::about(this, u8"提示", u8"影像文件未建立金字塔！");
+			return;
+		}
+
 		QList<GDALRasterBand*> bandList;
-		bandList.append(poDataset->GetRasterBand(1));
-		bandList.append(poDataset->GetRasterBand(2));
-		bandList.append(poDataset->GetRasterBand(3));
+		bandList.append(poDataset->GetRasterBand(1)->GetOverview(0));
+		bandList.append(poDataset->GetRasterBand(2)->GetOverview(0));
+		bandList.append(poDataset->GetRasterBand(3)->GetOverview(0));
 		showImg(&bandList);
 		GDALClose(poDataset);
 	}

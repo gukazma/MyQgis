@@ -26,6 +26,7 @@ namespace Stone
 	public:
 		View();
 		GraphicsView* m_GraphicsView;
+		int Scale_level = 1;
 	public slots:
 		void zoomIn();
 		void zoomOut();
