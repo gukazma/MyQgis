@@ -54,7 +54,7 @@ namespace Stone
 			tr("Open tiff files(*.tiff *.tif)"));
 		GDALAllRegister();
 		CPLSetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");
-		auto poDataset = (GDALDataset*)GDALOpen(file.toStdString().c_str(), GA_ReadOnly);
+		poDataset = (GDALDataset*)GDALOpen(file.toStdString().c_str(), GA_ReadOnly);
 
 		if (poDataset == NULL)
 		{
@@ -91,8 +91,8 @@ namespace Stone
 		bandList.append(poDataset->GetRasterBand(3)->GetOverview(0));
 		try
 		{
-			auto imgitem = getImgbyBand(&bandList);
-			m_GraphicsView->scene()->addItem(imgitem);
+			getImgbyBand(&bandList);
+			
 		}
 		catch (const std::exception& e)
 		{
@@ -104,18 +104,18 @@ namespace Stone
 	{
 
 	}
-	QGraphicsPixmapItem* View::getImgbyBand(QList<GDALRasterBand*>* imgBand)
+	void View::getImgbyBand(QList<GDALRasterBand*>* imgBand)
 	{
 		if (imgBand->size() != 3)
 		{
 			throw std::runtime_error("Number of image band must be 3!");
-			return nullptr;
+			return;
 		}
 
 		int imgWidth = imgBand->at(0)->GetXSize();
 		int imgHeight = imgBand->at(0)->GetYSize();
 
-		float m_scaleFactor = this->height() * 5.0 / imgHeight;
+		float m_scaleFactor = this->height() * Scale_level / imgHeight;
 
 		int iScaleWidth = (int)(imgWidth * m_scaleFactor);
 		int iScaleHeight = (int)(imgHeight * m_scaleFactor);
@@ -153,8 +153,8 @@ namespace Stone
 		}
 
 		// 构造图像并显示
-		QGraphicsPixmapItem* imgItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(allBandUC, iScaleWidth, iScaleHeight, bytePerLine, QImage::Format_RGB888)));
-		return imgItem;
+		imgItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(allBandUC, iScaleWidth, iScaleHeight, bytePerLine, QImage::Format_RGB888)));
+		m_GraphicsView->scene()->addItem(imgItem);
 	}
 	unsigned char* View::imgSketch(float* buffer, GDALRasterBand* currentBand, int bandSize, double noValue)
 	{

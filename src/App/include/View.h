@@ -28,14 +28,15 @@ namespace Stone
 	public:
 		View();
 		GraphicsView* m_GraphicsView;
-		int Scale_level = 1;
+		float Scale_level = 1;
 		int imgWidth;
 		int imgHeight;
 		float scaleFactor;
 		int iScaleWidth;
 		int iScaleHeight;
 		std::string imagePath;
-
+		QGraphicsPixmapItem* imgItem;
+		GDALDataset* poDataset;
 	public slots:
 		void zoomIn();
 		void zoomOut();
@@ -43,7 +44,7 @@ namespace Stone
 		void slotOpenImage();
 	private:
 		void refreshImage();
-		QGraphicsPixmapItem* getImgbyBand(QList<GDALRasterBand*>* imgBand);
+		void getImgbyBand(QList<GDALRasterBand*>* imgBand);
 		unsigned char* imgSketch(float* buffer, GDALRasterBand* currentBand, int bandSize, double noValue);
 	};
 }
