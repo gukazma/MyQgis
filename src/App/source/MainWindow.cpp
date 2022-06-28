@@ -18,8 +18,8 @@ namespace Stone
 
 		auto m_scaleFactor = this->height() * 5.0 / imgHeight;
 
-		int iScaleWidth = (int)(imgWidth * m_scaleFactor - 1);
-		int iScaleHeight = (int)(imgHeight * m_scaleFactor - 1);
+		int iScaleWidth = (int)(imgWidth * m_scaleFactor);
+		int iScaleHeight = (int)(imgHeight * m_scaleFactor);
 
 		GDALDataType dataType = imgBand->at(0)->GetRasterDataType();
 
@@ -41,7 +41,7 @@ namespace Stone
 		bBandUC = imgSketch(bBand, imgBand->at(2), iScaleWidth * iScaleHeight, imgBand->at(2)->GetNoDataValue());
 		
 		// 将三个波段组合起来
-		int bytePerLine = (iScaleWidth * 24 + 31) / 8;
+		int bytePerLine = (iScaleWidth * 3);
 		unsigned char* allBandUC = new unsigned char[bytePerLine * iScaleHeight];
 		for (int h = 0; h < iScaleHeight; h++)
 		{
