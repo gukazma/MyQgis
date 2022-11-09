@@ -1,4 +1,5 @@
 ﻿#include "MainWindow.h"
+#include "ProcessDialog.h"
 #include "ui_Mainwindow.h"
 #include <View.h>
 #include <ImageItem.h>

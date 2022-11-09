@@ -1,4 +1,5 @@
 #pragma once
+#include "ProcessDialog.h"
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <gdal_priv.h>

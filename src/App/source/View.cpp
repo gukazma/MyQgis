@@ -1,10 +1,13 @@
-#include "View.h"
+ï»¿#include "View.h"
 #include <QGridLayout>
 #include <QWheelEvent>
 #include <iostream>
 #include <QGraphicsPixmapItem>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <thread>
+#include "ProcessBar.h"
+#include "ProcessDialog.h"
 namespace Stone
 {
 #if QT_CONFIG(wheelevent)
@@ -58,17 +61,23 @@ namespace Stone
 
 		if (poDataset == NULL)
 		{
-			QMessageBox::about(this, u8"ÌáÊ¾", u8"Ö¸¶¨µÄÎÄ¼þ²»ÄÜ´ò¿ª£¡");
+			QMessageBox::about(this, QString::fromLocal8Bit("é”™è¯¯"), QString::fromLocal8Bit("GDAL åˆå§‹åŒ–å¤±è´¥"));
 			return;
 		}
 
-		int  ret = QMessageBox::question(this, "question", u8"ÊÇ·ñ¹¹½¨½ð×ÖËþ£¿", QMessageBox::No | QMessageBox::Yes);
+		int  ret = QMessageBox::question(this, "question", QString::fromLocal8Bit("æ˜¯å¦æž„å»ºå›¾åƒé‡‘å­—å¡”"), QMessageBox::No | QMessageBox::Yes);
 		switch (ret) {
 		case QMessageBox::Yes:
 		{
-			int  anOverviewList[8] = { 2, 4, 8, 16, 32, 64, 128, 256 };
-			GDALProgressFunc pfnProgress = GDALTermProgress;
-			poDataset->BuildOverviews("NEAREST", 7, anOverviewList, 0, nullptr, pfnProgress, nullptr);
+			int  anOverviewList[9] = { 2, 4, 6, 8, 10, 20, 50, 100, 128};
+			ProcessDialog* processDialog = new ProcessDialog();
+			GDALProgressFunc pfnProgress = Stone::GDALTermProgress;
+			std::thread thread([&](){
+				poDataset->BuildOverviews("NEAREST", 9, anOverviewList, 0, nullptr, pfnProgress, (void*) processDialog);
+			});
+
+			thread.detach();
+			processDialog->exec();
 			break;
 		}
 		case QMessageBox::No:
@@ -77,11 +86,10 @@ namespace Stone
 			break;
 		}
 
-		//È·ÈÏÓ°ÏñÒÑ¾­ÓÐ½ð×ÖËþ
 		int pyramidCount = poDataset->GetRasterBand(1)->GetOverviewCount();
 		if (pyramidCount == 0)
 		{
-			QMessageBox::about(this, u8"ÌáÊ¾", u8"Ó°ÏñÎÄ¼þÎ´½¨Á¢½ð×ÖËþ£¡");
+			QMessageBox::about(this, QString::fromLocal8Bit("é”™è¯¯"), QString::fromLocal8Bit("æœªæž„å»ºå›¾åƒé‡‘å­—å¡”"));
 			return;
 		}
 
@@ -122,24 +130,20 @@ namespace Stone
 
 		GDALDataType dataType = imgBand->at(0)->GetRasterDataType();
 
-		// Ê×ÏÈ·Ö±ð¶ÁÈ¡RGBÈý¸ö²¨¶Î
 		float* rBand = new float[iScaleWidth * iScaleHeight];
 		float* gBand = new float[iScaleWidth * iScaleHeight];
 		float* bBand = new float[iScaleWidth * iScaleHeight];
 
 		unsigned char* rBandUC, * gBandUC, * bBandUC;
 
-		// ¸ù¾ÝÊÇ·ñÏÔÊ¾²ÊÉ«Í¼Ïñ£¬ÅÐ¶ÏRGBÈý¸ö²¨¶ÎµÄ×é³É·½Ê½£¬²¢·Ö±ð¶ÁÈ¡
 		imgBand->at(0)->RasterIO(GF_Read, 0, 0, imgWidth, imgHeight, rBand, iScaleWidth, iScaleHeight, GDT_Float32, 0, 0);
 		imgBand->at(1)->RasterIO(GF_Read, 0, 0, imgWidth, imgHeight, gBand, iScaleWidth, iScaleHeight, GDT_Float32, 0, 0);
 		imgBand->at(2)->RasterIO(GF_Read, 0, 0, imgWidth, imgHeight, bBand, iScaleWidth, iScaleHeight, GDT_Float32, 0, 0);
 
-		// ·Ö±ðÀ­ÉìÃ¿¸ö²¨¶Î²¢½«Float×ª»»Îªunsigned char
 		rBandUC = imgSketch(rBand, imgBand->at(0), iScaleWidth * iScaleHeight, imgBand->at(0)->GetNoDataValue());
 		gBandUC = imgSketch(gBand, imgBand->at(1), iScaleWidth * iScaleHeight, imgBand->at(1)->GetNoDataValue());
 		bBandUC = imgSketch(bBand, imgBand->at(2), iScaleWidth * iScaleHeight, imgBand->at(2)->GetNoDataValue());
 
-		// ½«Èý¸ö²¨¶Î×éºÏÆðÀ´
 		int bytePerLine = (iScaleWidth * 3);
 		unsigned char* allBandUC = new unsigned char[bytePerLine * iScaleHeight];
 		for (int h = 0; h < iScaleHeight; h++)
@@ -152,7 +156,6 @@ namespace Stone
 			}
 		}
 
-		// ¹¹ÔìÍ¼Ïñ²¢ÏÔÊ¾
 		imgItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(allBandUC, iScaleWidth, iScaleHeight, bytePerLine, QImage::Format_RGB888)));
 		m_GraphicsView->scene()->addItem(imgItem);
 	}

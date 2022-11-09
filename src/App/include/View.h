@@ -3,6 +3,7 @@
 #include <QGraphicsView>
 #include <map>
 #include <gdal_priv.h>
+#include <QtWidgets/QProgressBar>
 namespace Stone
 {
 	class View;
