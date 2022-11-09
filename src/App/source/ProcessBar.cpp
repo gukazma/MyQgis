@@ -10,24 +10,12 @@ namespace Stone {
                                     const char * pszMessage,
                                     void * pProgressArg )
     {
-        const int nThisTick = std::min(40, std::max(0,
-        static_cast<int>(dfComplete * 40.0) ));
+        const int nThisTick = std::min(100, std::max(0,
+        static_cast<int>(dfComplete * 100) ));
         ProcessDialog* processdialog = (ProcessDialog*) pProgressArg;
-        // Have we started a new progress run?
-        static int nLastTick = -1;
-        if( nThisTick < nLastTick && nLastTick >= 39 )
-            nLastTick = -1;
-
-        if( nThisTick <= nLastTick )
-            return true;
-
-        while( nThisTick > nLastTick )
-        {
-            ++nLastTick;
-            processdialog->setValue(nLastTick);
-        }
-        
-        std::cout << nLastTick << std::endl;
+            
+        processdialog->setValue(nThisTick);
+        std::cout << nThisTick  << std::endl;
         return true;
     }
 }

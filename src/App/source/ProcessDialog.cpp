@@ -24,6 +24,9 @@ void ProcessDialog::onValueChange()
 void ProcessDialog::setValue(int value)
 {
     m_Value = value;
+    if (value >= 100) {
+        this->close();
+    }
     emit signalSetValue();
 }
 
